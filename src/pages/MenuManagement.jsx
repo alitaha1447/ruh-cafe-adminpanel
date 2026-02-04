@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Upload, X, User } from "lucide-react";
 import AddCategory from "../components/customModals/AddCategory";
 import AddDish from "../components/customModals/AddDish";
 import api from "../api/axios";
+import { toast } from "react-toastify";
 
 const MenuManagement = () => {
   const [activeModal, setActiveModal] = useState(null);
@@ -48,6 +49,71 @@ const MenuManagement = () => {
       setDishes(res?.data?.data);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleDeleteDish = (dish) => {
+    toast.warning(
+      ({ closeToast }) => (
+        <div>
+          <p className="font-medium mb-3">
+            Are you sure you want to delete this content?
+          </p>
+
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={closeToast}
+              className="px-3 py-1 border rounded-md text-sm"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={() => confirmDeleteContent(dish._id, closeToast)}
+              className="px-3 py-1 bg-red-600 text-white rounded-md text-sm"
+            >
+              Yes, Delete
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        autoClose: false,
+        closeOnClick: false,
+      },
+    );
+  };
+
+  const confirmDeleteContent = async (id, closeToast) => {
+    closeToast(); // close confirmation toast
+    // setLoading(true);
+    // setDeletingId(id);
+    const toastId = toast.loading("Deleting content...");
+
+    try {
+      await api.delete(`/api/dishes/delete-dish/${id}`);
+
+      toast.update(toastId, {
+        render: "Dish deleted successfully",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      if (selectedCategory?._id) {
+        fetchDishes(selectedCategory._id);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.update(toastId, {
+        render: error?.message || "Delete failed",
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+      });
+    } finally {
+      // setLoading(false);
+      // setDeletingId(null);
     }
   };
 

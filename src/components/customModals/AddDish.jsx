@@ -4,11 +4,21 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import api from "../../api/axios";
 
+const DISH_FEATURES = [
+  { key: "spicy", label: "🌶️ Spicy" },
+  { key: "chefSpecial", label: "👨‍🍳 Chef Special" },
+  { key: "glutenFree", label: "🌾 Gluten Free" },
+  { key: "bestSeller", label: "🔥 Best Seller" },
+  { key: "kidsFriendly", label: "🧒 Kids Friendly" },
+  { key: "healthy", label: "🥗 Healthy" },
+];
+
 const AddDish = ({
   mode = "add",
   closeModal,
   selectedCategory,
   selectedDish,
+  refetch,
 }) => {
   const categoryId = selectedCategory && selectedCategory._id;
   const [isEditMode, setIsEditMode] = useState(mode === "edit");
@@ -18,8 +28,17 @@ const AddDish = ({
   const [formData, setFormData] = useState({
     heading: "",
     description: "",
+    dishType: "veg",
     mediaType: "image",
     media: null,
+    features: {
+      spicy: false,
+      chefSpecial: false,
+      glutenFree: false,
+      bestSeller: false,
+      kidsFriendly: false,
+      healthy: false,
+    },
   });
 
   useEffect(() => {
@@ -29,8 +48,17 @@ const AddDish = ({
       setFormData({
         heading: selectedDish.dishName || "",
         description: selectedDish.dishDescription || "",
+        dishType: selectedDish.dishType || "veg", // 👈 NEW
         mediaType: selectedDish.dishMedia?.mediaType || "image",
         media: null, // user may re-upload
+        features: selectedDish.features || {
+          spicy: false,
+          chefSpecial: false,
+          glutenFree: false,
+          bestSeller: false,
+          kidsFriendly: false,
+          healthy: false,
+        },
       });
 
       setExistingMediaUrl(selectedDish.dishMedia?.url || null);
@@ -45,6 +73,7 @@ const AddDish = ({
     setFormData({
       heading: "",
       description: "",
+      dishType: "veg",
       mediaType: "image",
       media: null,
     });
@@ -55,6 +84,15 @@ const AddDish = ({
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const handleFeatureChange = (key) => {
+    setFormData((prev) => ({
+      ...prev,
+      features: {
+        ...prev.features,
+        [key]: !prev.features[key],
+      },
+    }));
+  };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
@@ -62,6 +100,7 @@ const AddDish = ({
   };
 
   const handleSubmit = async (e) => {
+    const id = selectedDish?._id;
     e.preventDefault();
     setLoading(true);
 
@@ -74,7 +113,9 @@ const AddDish = ({
       const data = new FormData();
       data.append("heading", formData.heading);
       data.append("description", formData.description);
+      data.append("dishType", formData.dishType);
       data.append("mediaType", formData.mediaType);
+      data.append("features", JSON.stringify(formData.features));
 
       // append media ONLY if selected
       if (formData.media) {
@@ -83,11 +124,7 @@ const AddDish = ({
 
       /* ========= API CALL ========= */
       if (isEditMode) {
-        await api.put(
-          `/api/contents/update-content/${id}`,
-          data,
-          // `https://ba-dastoor-backend.onrender.com/api/generalContent/update-content?page=${selectedSection}`,
-        );
+        await api.put(`/api/dishes/update-dish/${id}`, data);
         toast.update(toastId, {
           render: "Dish updated successfully ✅",
           type: "success",
@@ -106,7 +143,7 @@ const AddDish = ({
         });
       }
 
-      //   refetch();
+      refetch();
       closeModal();
     } catch (error) {
       console.log(error);
@@ -169,6 +206,69 @@ const AddDish = ({
             />
           </div>
 
+          {/* VEG OR NON-VEG */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Dish Type
+            </label>
+
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="dishType"
+                  value="veg"
+                  checked={formData.dishType === "veg"}
+                  onChange={handleChange}
+                />
+                <span className="text-green-600 font-semibold">🥬 Veg</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="dishType"
+                  value="non-veg"
+                  checked={formData.dishType === "non-veg"}
+                  onChange={handleChange}
+                />
+                <span className="text-red-600 font-semibold">🍗 Non-Veg</span>
+              </label>
+            </div>
+          </div>
+
+          {/* DISH FEATURES */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Dish Features
+            </label>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {DISH_FEATURES.map((feature) => (
+                <label
+                  key={feature.key}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition
+          ${
+            formData.features[feature.key]
+              ? "bg-blue-50 border-blue-500 text-blue-700"
+              : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
+          }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.features[feature.key]}
+                    onChange={() => handleFeatureChange(feature.key)}
+                    className="hidden"
+                  />
+                  <span className="text-sm font-medium">{feature.label}</span>
+                </label>
+              ))}
+            </div>
+
+            <p className="text-xs text-gray-500 mt-1">
+              You can select none, some, or all features
+            </p>
+          </div>
           {/* MEDIA TYPE */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
