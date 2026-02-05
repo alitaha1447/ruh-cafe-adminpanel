@@ -302,7 +302,7 @@ const BannerManagement = () => {
       );
       // alert("Uploaded successfully");
       toast.update(toastId, {
-        render: "Mobile banner uploaded successfully ✅",
+        render: "Desktop banner uploaded successfully ✅",
         type: "success",
         isLoading: false,
         autoClose: 2000,

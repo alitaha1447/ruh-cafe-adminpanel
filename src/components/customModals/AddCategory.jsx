@@ -106,7 +106,7 @@ const AddCategory = ({
         });
       }
 
-      // refetch();
+      refetch();
       closeModal();
     } catch (error) {
       console.log(error);

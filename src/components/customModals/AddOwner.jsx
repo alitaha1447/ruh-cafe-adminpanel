@@ -3,7 +3,12 @@ import { X, Upload, User, Plus } from "lucide-react";
 import api from "../../api/axios";
 import { toast } from "react-toastify";
 
-const AddOwner = ({ mode = "add", closeModal, selectedOwner = null }) => {
+const AddOwner = ({
+  mode = "add",
+  closeModal,
+  selectedOwner = null,
+  refetchAboutOwner,
+}) => {
   const [isEditMode, setIsEditMode] = useState(mode === "edit");
 
   const [formData, setFormData] = useState({
@@ -99,7 +104,7 @@ const AddOwner = ({ mode = "add", closeModal, selectedOwner = null }) => {
         });
       }
 
-      //   refreshData?.();
+      refetchAboutOwner?.();
       closeModal();
       // resetForm();
     } catch (error) {

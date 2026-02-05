@@ -99,6 +99,7 @@ const AboutOwner = () => {
           mode={modalMode}
           closeModal={() => setActiveModal(null)}
           selectedOwner={selectedOwner}
+          refetchAboutOwner={fetchAboutOwner}
         />
       )}
     </div>

@@ -76,6 +76,14 @@ const AddDish = ({
       dishType: "veg",
       mediaType: "image",
       media: null,
+      features: {
+        spicy: false,
+        chefSpecial: false,
+        glutenFree: false,
+        bestSeller: false,
+        kidsFriendly: false,
+        healthy: false,
+      },
     });
     setExistingMediaUrl(null);
   };
@@ -249,14 +257,14 @@ const AddDish = ({
                   key={feature.key}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition
           ${
-            formData.features[feature.key]
+            formData.features?.[feature.key]
               ? "bg-blue-50 border-blue-500 text-blue-700"
               : "bg-white border-gray-300 text-gray-600 hover:bg-gray-50"
           }`}
                 >
                   <input
                     type="checkbox"
-                    checked={formData.features[feature.key]}
+                    checked={formData.features?.[feature.key]}
                     onChange={() => handleFeatureChange(feature.key)}
                     className="hidden"
                   />
