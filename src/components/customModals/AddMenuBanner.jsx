@@ -27,6 +27,7 @@ const AddMenuBanner = ({
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
+  const MAX_SIZE = 9 * 1024 * 1024; // 9MB
 
   const fetchCategories = async () => {
     if (hasFetched) return; // 🚫 prevent refetch
@@ -90,6 +91,16 @@ const AddMenuBanner = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // 🔒 1. FILE SIZE VALIDATION
+    if (formData.media && formData.media.size > MAX_SIZE) {
+      toast.error(
+        `${formData.mediaType === "image" ? "Image" : "Video"} is ${(
+          formData.media.size /
+          (1024 * 1024)
+        ).toFixed(2)}MB. Max allowed is 9MB ❌`,
+      );
+      return;
+    }
 
     setLoading(true);
 

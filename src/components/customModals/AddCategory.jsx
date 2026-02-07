@@ -20,6 +20,7 @@ const AddCategory = ({
     mediaType: "image",
     media: null,
   });
+  const MAX_SIZE = 9 * 1024 * 1024; // 9MB
 
   useEffect(() => {
     if (mode === "edit" && selectedCategory) {
@@ -63,6 +64,16 @@ const AddCategory = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     let id = selectedCategory?._id;
+    // 🔒 1. FILE SIZE VALIDATION (IMAGE + VIDEO)
+    if (formData.media && formData.media.size > MAX_SIZE) {
+      toast.error(
+        `${formData.mediaType === "image" ? "Image" : "Video"} is ${(
+          formData.media.size /
+          (1024 * 1024)
+        ).toFixed(2)}MB. Max allowed is 9MB ❌`,
+      );
+      return;
+    }
     setLoading(true);
 
     const toastId = toast.loading(

@@ -55,7 +55,7 @@ const AddJob = ({ mode = "add", closeModal, selectedJob, refreshList }) => {
     setLoading(true);
     const payload = {
       jobTitle: formData?.jobTitle,
-      message: formData?.description,
+      description: formData?.description,
       location: formData?.location,
       experience: formData?.experience,
       status: formData?.status,

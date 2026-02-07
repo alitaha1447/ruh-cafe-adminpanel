@@ -322,7 +322,7 @@ const MenuManagement = () => {
           mode={modalMode}
           closeModal={() => setActiveModal(null)}
           selectedCategory={selectedCategory}
-          refetch={fetchcategories}
+          refetch={async () => await fetchcategories()}
         />
       )}
       {activeModal === "dish" && (

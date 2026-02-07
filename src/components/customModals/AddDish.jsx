@@ -41,6 +41,8 @@ const AddDish = ({
     },
   });
 
+  const MAX_SIZE = 9 * 1024 * 1024; // 9MB
+
   useEffect(() => {
     if (mode === "edit" && selectedDish) {
       setIsEditMode(true);
@@ -110,6 +112,16 @@ const AddDish = ({
   const handleSubmit = async (e) => {
     const id = selectedDish?._id;
     e.preventDefault();
+    // 🔒 1. FILE SIZE VALIDATION
+    if (formData.media && formData.media.size > MAX_SIZE) {
+      toast.error(
+        `${formData.mediaType === "image" ? "Image" : "Video"} is ${(
+          formData.media.size /
+          (1024 * 1024)
+        ).toFixed(2)}MB. Max allowed is 9MB ❌`,
+      );
+      return;
+    }
     setLoading(true);
 
     const toastId = toast.loading(

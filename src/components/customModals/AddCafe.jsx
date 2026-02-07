@@ -27,6 +27,7 @@ const AddCafe = ({
   const [editedSlot, setEditedSlot] = useState(null);
   const [existingImages, setExistingImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const MAX_SIZE = 9 * 1024 * 1024; // 9MB
 
   useEffect(() => {
     if (mode === "edit" && selectedData) {
@@ -79,6 +80,25 @@ const AddCafe = ({
   /* ========== SUBMIT ============ */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const uploadedImages = Object.values(images).filter(Boolean);
+
+    if (uploadedImages.length < 4) {
+      toast.error(
+        "Please upload all 4 images. Images cannot be less than 4 ❌",
+      );
+      return;
+    }
+    // ✅ VALIDATION FOR ALL 4 IMAGES
+    for (const [slot, file] of Object.entries(images)) {
+      if (file && file.size > MAX_SIZE) {
+        toast.error(
+          `Image ${slot.toUpperCase()} is ${(file.size / (1024 * 1024)).toFixed(
+            2,
+          )}MB. Max allowed is 9MB ❌`,
+        );
+        return;
+      }
+    }
     setLoading(true);
 
     const data = new FormData();
@@ -187,7 +207,7 @@ const AddCafe = ({
             />
           </div>
           <div>
-            <p className="text-sm font-medium mb-2">Sibling Images (Max 5)</p>
+            <p className="text-sm font-medium mb-2">Sibling Images (Max 4)</p>
 
             <div className="grid grid-cols-5 gap-3">
               {["img1", "img2", "img3", "img4"].map((key, index) => (

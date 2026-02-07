@@ -30,12 +30,20 @@ const BannerManagement = () => {
       name: "Menu",
     },
     {
-      id: "gallery",
-      name: "Gallery",
-    },
-    {
       id: "contact",
       name: "Contact Us",
+    },
+    {
+      id: "franchise",
+      name: "Franchise",
+    },
+    {
+      id: "career",
+      name: "Career",
+    },
+    {
+      id: "liveMusic",
+      name: "Live Music",
     },
   ];
   // Color mapping for Tailwind CSS classes
@@ -52,13 +60,21 @@ const BannerManagement = () => {
       selected: "border-purple-500 bg-purple-50 text-purple-700",
       unselected: "border-purple-200 bg-purple-25 hover:bg-purple-50",
     },
-    gallery: {
-      selected: "border-green-500 bg-green-50 text-green-700",
-      unselected: "border-green-200 bg-green-25 hover:bg-green-50",
-    },
     contact: {
       selected: "border-orange-500 bg-orange-50 text-orange-700",
       unselected: "border-orange-200 bg-orange-25 hover:bg-orange-50",
+    },
+    franchise: {
+      selected: "border-green-500 bg-green-50 text-green-700",
+      unselected: "border-green-200 bg-green-25 hover:bg-green-50",
+    },
+    career: {
+      selected: "border-red-500 bg-red-50 text-red-700",
+      unselected: "border-red-200 bg-red-25 hover:bg-red-50",
+    },
+    liveMusic: {
+      selected: "border-blue-500 bg-blue-50 text-blue-700",
+      unselected: "border-blue-200 bg-blue-25 hover:bg-blue-50",
     },
   };
 
@@ -98,6 +114,8 @@ const BannerManagement = () => {
   const currentSection = websiteSections.find(
     (section) => section.id === selectedSection,
   );
+
+  const MAX_SIZE = 9 * 1024 * 1024; // 9MB
 
   const handleSectionChange = (sectionId) => {
     setSelectedSection(sectionId);
@@ -263,6 +281,13 @@ const BannerManagement = () => {
 
     if (!desktopPreview) {
       alert("Please upload desktop banner image");
+      setIsUploading(false);
+      return;
+    }
+
+    // ✅ FRONTEND SIZE VALIDATION
+    if (savedBanners.desktop && savedBanners.desktop.size > MAX_SIZE) {
+      toast.error("File size should not exceed 9MB ❌");
       setIsUploading(false);
       return;
     }
@@ -458,6 +483,11 @@ const BannerManagement = () => {
 
     if (!mobilePreview) {
       alert("Please upload mobile banner image");
+      setIsMobileUploading(false);
+      return;
+    }
+    if (savedBanners.mobile && savedBanners.mobile.size > MAX_SIZE) {
+      toast.error("File size should not exceed 9MB ❌");
       setIsMobileUploading(false);
       return;
     }

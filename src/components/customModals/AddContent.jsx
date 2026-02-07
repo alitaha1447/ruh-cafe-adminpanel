@@ -28,6 +28,8 @@ const AddContent = ({
     media: null,
   });
 
+  const MAX_SIZE = 9 * 1024 * 1024; // 9MB
+
   /* =========================
    FETCH EXISTING ABOUT US
   ========================= */
@@ -71,6 +73,16 @@ const AddContent = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ✅ SIZE VALIDATION (IMAGE + VIDEO BOTH)
+    if (formData.media) {
+      if (formData.media.size > MAX_SIZE) {
+        toast.error(
+          `File is ${(formData.media.size / (1024 * 1024)).toFixed(2)}MB. Max allowed is 9MB ❌`,
+        );
+        setLoading(false);
+        return;
+      }
+    }
     const toastId = toast.loading(
       isEditMode ? "Updating Content..." : "Saving Content...",
     );

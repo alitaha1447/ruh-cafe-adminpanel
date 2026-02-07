@@ -22,6 +22,7 @@ const AddOwner = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [existingMediaUrl, setExistingMediaUrl] = useState(null);
+  const MAX_SIZE = 9 * 1024 * 1024; // 9MB
 
   useEffect(() => {
     if (mode === "edit" && selectedOwner) {
@@ -69,6 +70,15 @@ const AddOwner = ({
   /* ========== SUBMIT ============ */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // ✅ VALIDATE IMAGE SIZE FIRST
+    if (photo && photo.size > MAX_SIZE) {
+      toast.error(
+        `Image is ${(photo.size / (1024 * 1024)).toFixed(
+          2,
+        )}MB. Max allowed is 9MB ❌`,
+      );
+      return;
+    }
     setLoading(true);
 
     const data = new FormData();

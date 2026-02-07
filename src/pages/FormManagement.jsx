@@ -3,6 +3,10 @@ import api from "../api/axios";
 
 export const enquirySections = [
   {
+    id: "contact",
+    name: "Contact Enquiry",
+  },
+  {
     id: "career",
     name: "Career Enquiry",
   },
@@ -12,6 +16,10 @@ export const enquirySections = [
   },
 ];
 export const SECTION_COLORS = {
+  contact: {
+    selected: "border-blue-500 bg-blue-50 text-blue-700",
+    unselected: "border-blue-200 bg-blue-25 hover:bg-blue-50",
+  },
   career: {
     selected: "border-blue-500 bg-blue-50 text-blue-700",
     unselected: "border-blue-200 bg-blue-25 hover:bg-blue-50",
